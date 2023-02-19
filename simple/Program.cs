@@ -401,6 +401,56 @@ static class Program
                 }
                 case "4": // Sorting
                 {
+                    DirectoryInfo directoryInfoImages = new DirectoryInfo(FolderPathImages);
+                    DirectoryInfo directoryInfoText = new DirectoryInfo(FolderPathText);
+
+                    // Loop through all files in Images folder
+                    foreach (FileInfo fileInfo in directoryInfoImages.GetFiles())
+                    {
+                        // Checking the MIME type for the file
+                        string fileExtension = fileInfo.Extension;
+                        if (!MIMETypesDictionary.ContainsKey(fileExtension))
+                        {
+                            Console.WriteLine($"Unrecognised file type {fileExtension} for {fileInfo.Name}");
+                            continue;
+                        }
+
+                        // Checking if the MIME type includes the text "text"
+                        string fileType = MIMETypesDictionary[fileExtension];
+                        if (fileType.Contains("text"))
+                        {
+                            string originalPath = fileInfo.FullName;
+                            string destinationPath = Path.Combine(directoryInfoText.FullName, fileInfo.Name);
+                            // Move to Text folder
+                            fileInfo.MoveTo(destinationPath);
+                            Console.WriteLine($"Moved {originalPath} to {destinationPath}.");
+                        }
+                    }
+                    // Loop through all files in Text folder
+                    foreach (FileInfo fileInfo in directoryInfoText.GetFiles())
+                    {
+                        // Checking the MIME type for the file
+                        string fileExtension = fileInfo.Extension;
+                        if (!MIMETypesDictionary.ContainsKey(fileExtension))
+                        {
+                            Console.WriteLine($"Unrecognised file type {fileExtension} for {fileInfo.Name}");
+                            continue;
+                        }
+
+                        // Checking if the MIME type includes the text "image"
+                        string fileType = MIMETypesDictionary[fileExtension];
+                        if (fileType.Contains("image"))
+                        {
+                            string originalPath = fileInfo.FullName;
+                            string destinationPath = Path.Combine(directoryInfoImages.FullName, fileInfo.Name);
+                            // Move to Image folder
+                            fileInfo.MoveTo(destinationPath);
+                            Console.WriteLine($"Moved {originalPath} to {destinationPath}.");
+                        }
+                    }
+                    
+                    Console.WriteLine("Successfully sorted files.");
+                    
                     break;
                 }
                 case "5": // Abnormal content
